@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = 'This plugin adds `rel` and `target` attributes to all external links in your Jekyll site.'
   spec.description   = spec.summary
-  spec.homepage      = 'https://twinsunsolutions.com'
+  spec.homepage      = 'https://github.com/twinsunllc/jekyll-link-attributes'
   spec.license       = 'BSD 3-Clause'
 
   # Prevent pushing this gem to RubyGems.org by setting 'allowed_push_host', or
