@@ -5,6 +5,7 @@ require 'jekyll-link-attributes'
 describe Jekyll::LinkAttributes do
   before :each do
     @config = {
+      'url' => 'https://config.example.com',
       'external_links' => {
         'enabled' => true,
         'rel' => 'external nofollow noopener',
@@ -28,10 +29,13 @@ describe Jekyll::LinkAttributes do
   end
 
   it 'detects external links' do
-    expect(Jekyll::LinkAttributes.external_link?('http://www.twinsunsolutions.com')).to be true
-    expect(Jekyll::LinkAttributes.external_link?('https://www.twinsunsolutions.com')).to be true
-    expect(Jekyll::LinkAttributes.external_link?('/blog')).to be false
-    expect(Jekyll::LinkAttributes.external_link?('contact')).to be false
+    expect(Jekyll::LinkAttributes.external_link?(config: @config, url: 'http://www.twinsunsolutions.com')).to be true
+    expect(Jekyll::LinkAttributes.external_link?(config: @config, url: 'https://www.twinsunsolutions.com')).to be true
+    expect(Jekyll::LinkAttributes.external_link?(config: @config, url: '/blog')).to be false
+    expect(Jekyll::LinkAttributes.external_link?(config: @config, url: 'contact')).to be false
+
+    # absolute link to our own site host; don't treat as an external link.
+    expect(Jekyll::LinkAttributes.external_link?(config: @config, url: 'https://config.example.com')).to be false
   end
 
   it 'detects excluded external links' do

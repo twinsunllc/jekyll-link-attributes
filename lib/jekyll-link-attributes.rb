@@ -17,7 +17,7 @@ module Jekyll
 
       output = Nokogiri::HTML(article.output)
       output.css('a').each do |a|
-        next unless external_link?(a['href'])
+        next unless external_link?(config: config, url: a['href'])
         next if excludes_external_link?(config: config, url: a['href'])
 
         a['rel'] = external_link_rel(config: config)
@@ -33,8 +33,9 @@ module Jekyll
       (config.dig('external_links', 'exclude') || []).include?(url)
     end
 
-    def self.external_link?(url)
-      (url =~ %r{^https?://}) != nil
+    def self.external_link?(config:, url:)
+      site_url = config['url']
+      !(url =~ %r{^https?://}).nil? && (site_url.nil? || !url.start_with?(site_url))
     end
 
     def self.external_links_enabled?(config:)
