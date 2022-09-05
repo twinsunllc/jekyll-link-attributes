@@ -30,7 +30,8 @@ module Jekyll
     private
 
     def self.excludes_external_link?(config:, url:)
-      (config.dig('external_links', 'exclude') || []).include?(url)
+      excludes = (config.dig('external_links', 'exclude') || [])
+      excludes.any? { |exclude| Regexp.new("^#{exclude}$").match? url }
     end
 
     def self.external_link?(config:, url:)

@@ -10,8 +10,9 @@ describe Jekyll::LinkAttributes do
         'enabled' => true,
         'rel' => 'external nofollow noopener',
         'target' => '_blank',
-        'exclude' => [
-          'https://exclude.example.com'
+        'exclude' => %w[
+          https://exclude.example.com
+          https://regex.example.com/.+
         ]
       }
     }
@@ -40,7 +41,11 @@ describe Jekyll::LinkAttributes do
 
   it 'detects excluded external links' do
     expect(Jekyll::LinkAttributes.excludes_external_link?(config: @config, url: 'https://exclude.example.com')).to be true
+    expect(Jekyll::LinkAttributes.excludes_external_link?(config: @config, url: 'https://exclude.example.com/nope')).to be false
     expect(Jekyll::LinkAttributes.excludes_external_link?(config: @config, url: 'https://include.example.com')).to be false
+
+    expect(Jekyll::LinkAttributes.excludes_external_link?(config: @config, url: 'https://regex.example.com/excluded')).to be true
+    expect(Jekyll::LinkAttributes.excludes_external_link?(config: @config, url: 'https://regex.example.com')).to be false
   end
 
   it 'detects external links enabled' do

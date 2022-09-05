@@ -26,8 +26,9 @@ external_links:
   rel: external nofollow noopener
   target: _blank
   exclude:
-    - "https://example.com"
-    - "https://another.example.com/test.html"
+    - https://example.com
+    - https://another.example.com/test.html
+    - https://regex.example.com/.+
 ```
 
 ### Default Values
