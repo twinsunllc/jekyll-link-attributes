@@ -18,7 +18,7 @@ The default configuration opens external links in a new tab and conserves domain
 
 ## Configuration
 
-You can override the default configuration by adding the following section to your Jekyll site's `config.yml`:
+You can override the default configuration by adding the following section to your Jekyll site's `_config.yml`:
 
 ```yaml
 external_links:
