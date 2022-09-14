@@ -20,8 +20,9 @@ module Jekyll
         next unless external_link?(config: config, url: a['href'])
         next if excludes_external_link?(config: config, url: a['href'])
 
-        a['rel'] = external_link_rel(config: config)
-        a['target'] = external_link_target(config: config)
+        # only set rel and target if they're not already set
+        a['rel'] = external_link_rel(config: config) unless a['rel']
+        a['target'] = external_link_target(config: config) unless a['target']
       end
 
       article.output = output.to_s

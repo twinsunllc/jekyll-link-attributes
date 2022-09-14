@@ -16,7 +16,9 @@ The default configuration opens external links in a new tab and conserves domain
       - jekyll-link-attributes
     ```
 
-## Configuration
+## Usage
+
+### Configuration
 
 You can override the default configuration by adding the following section to your Jekyll site's `_config.yml`:
 
@@ -31,13 +33,25 @@ external_links:
     - https://regex.example.com/.+
 ```
 
-### Default Values
+#### Default Configuration
 | Key | Default Value | Description |
 | ---------------------------- | ---------------------------- | -------------------------------------------------- |
 | `external_links.enabled` | `true`                       | Enable attribute modifications for external links. |
 | `external_links.rel`     | `external nofollow noopener` | The `rel` attribute to add to external links.      |
 | `external_links.target`  | `_blank`                     | The `target` attribute to add to external links.   |
 | `external_links.exclude` | `[]`                         | A list of URLs to exclude from processing.         |
+
+
+### Skipping individual links
+
+The `rel` or `target` attributes will not be modified for links that already have those existing attributes.
+This allows you to skip individual links without having to modify the plugin's configuration.
+
+ ```html
+ <a href"https://example.com" rel="nofollow">Example</a> <!-- `rel` will not be modified, but the configured `target` will be added. -->
+ <a href"https://example.com" target="_self">Example</a> <!-- `target` will not be modified, but the configured `rel` will be added. -->
+ <a href"https://example.com" rel="nofollow" target="_self">Example</a> <!-- Neither `rel` nor `target` will be modified. -->
+ ```
 
 ## Contributing
 
