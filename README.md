@@ -1,7 +1,7 @@
 # Jekyll Link Attributes
 
-This plugin adds `rel` and `target` attributes to all external links in your Jekyll site.
-The default configuration opens external links in a new tab and conserves domain authority for your site.
+A Jekyll plugin for managing external link behavior: `rel` attributes, `target` attributes, and UTM tracking parameters.
+Each concern is independently configurable with its own value and exclude list.
 
 ## Setup
 
@@ -16,11 +16,37 @@ The default configuration opens external links in a new tab and conserves domain
       - jekyll-link-attributes
     ```
 
-## Usage
+## Configuration
 
-### Configuration
+### Recommended (v2+)
 
-You can override the default configuration by adding the following section to your Jekyll site's `_config.yml`:
+Each attribute type is its own section with a `value` and optional `exclude` list:
+
+```yaml
+external_links:
+  enabled: true
+
+  rel:
+    value: external nofollow noopener
+    exclude:
+      - https://myotherapp.com(/?|/.*)?
+
+  target:
+    value: _blank
+    exclude:
+      - https://myotherapp.com(/?|/.*)?
+
+  utm:
+    enabled: true
+    source: mysite.com
+    medium: website
+    exclude:
+      - https://github.com(/?|/.*)?
+```
+
+### Legacy (v1, still supported)
+
+The original flat configuration style continues to work. The top-level `rel`, `target`, and `exclude` keys are used as fallbacks when the new-style section config is not present:
 
 ```yaml
 external_links:
@@ -28,19 +54,31 @@ external_links:
   rel: external nofollow noopener
   target: _blank
   exclude:
-    - https://example.com
-    - https://another.example.com/test.html
-    - https://regex.example.com/.+
+    - https://example.com(/?|/.*)?
 ```
 
-#### Default Configuration
-| Key | Default Value | Description |
-| ---------------------------- | ---------------------------- | -------------------------------------------------- |
-| `external_links.enabled` | `true`                       | Enable attribute modifications for external links. |
-| `external_links.rel`     | `external nofollow noopener` | The `rel` attribute to add to external links.      |
-| `external_links.target`  | `_blank`                     | The `target` attribute to add to external links.   |
-| `external_links.exclude` | `[]`                         | A list of URLs to exclude from processing.         |
+### Resolution order
 
+| Setting | Resolved from | Fallback |
+| ------- | ------------- | -------- |
+| rel value | `external_links.rel.value` | `external_links.rel` (string) or `external nofollow noopener` |
+| rel excludes | `external_links.rel.exclude` | `external_links.exclude` |
+| target value | `external_links.target.value` | `external_links.target` (string) or `_blank` |
+| target excludes | `external_links.target.exclude` | `external_links.exclude` |
+| utm excludes | `external_links.utm.exclude` | *(none, defaults to empty)* |
+
+### UTM tracking parameters
+
+When `external_links.utm.enabled` is `true`, UTM query parameters are automatically appended to external links:
+
+| Param | Value | Source |
+| -------------- | -------------------- | ---------------------------------------------------------------- |
+| `utm_source`   | Configured `source`  | Falls back to the site `url` with the protocol stripped.         |
+| `utm_medium`   | Configured `medium`  | Falls back to `website`.                                         |
+| `utm_campaign` | Auto-derived         | `blog` for post/blog layouts, otherwise the first URL path segment (e.g., `about`), or `homepage` for the root page. |
+| `utm_content`  | Auto-derived         | The page slug (e.g., `my-great-post` or `index`).               |
+
+Existing query parameters on links are preserved. UTM parameters already present on a link will not be overwritten.
 
 ### Skipping individual links
 
@@ -48,9 +86,9 @@ The `rel` or `target` attributes will not be modified for links that already hav
 This allows you to skip individual links without having to modify the plugin's configuration.
 
  ```html
- <a href"https://example.com" rel="nofollow">Example</a> <!-- `rel` will not be modified, but the configured `target` will be added. -->
- <a href"https://example.com" target="_self">Example</a> <!-- `target` will not be modified, but the configured `rel` will be added. -->
- <a href"https://example.com" rel="nofollow" target="_self">Example</a> <!-- Neither `rel` nor `target` will be modified. -->
+ <a href="https://example.com" rel="nofollow">Example</a> <!-- rel will not be modified, but target will be added. -->
+ <a href="https://example.com" target="_self">Example</a> <!-- target will not be modified, but rel will be added. -->
+ <a href="https://example.com" rel="nofollow" target="_self">Example</a> <!-- Neither rel nor target will be modified. -->
  ```
 
 ## Contributing
